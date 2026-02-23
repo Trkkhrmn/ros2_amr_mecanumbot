@@ -270,7 +270,7 @@ ros2 run nav2_map_server map_saver_cli \
 
 Full guide: [docs/MAPPING_WAREHOUSE.md](docs/MAPPING_WAREHOUSE.md)
 
-| ![QR to goal](docs/images/mapping.png) | ![Warehouse map from LiDAR](docs/images/warehouse_map.png) |
+| ![QR to goal](docs/images/mapping.gif) | ![Warehouse map from LiDAR](docs/images/warehouse_map.png) |
 |:---:|:---:|
 | QR-based navigation to a target pose | Occupancy grid built from LiDAR |
 
