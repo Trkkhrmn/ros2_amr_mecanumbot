@@ -1,0 +1,36 @@
+# Colcon
+build/
+install/
+log/
+
+# IDE & Editor
+.cursor/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+*.egg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Gazebo / Simulation
+*.log
+*.world.bak
+
+# Local / env
+.env
+.env.local
+*.local

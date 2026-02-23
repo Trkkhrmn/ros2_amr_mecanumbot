@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<!--
+  TEST 4 — Mecanum Kinematik Test World'ü
+  =========================================
+  Sadece düz zemin + ışık. Hiçbir engel yok.
+  Amaç: cmd_vel komutlarına karşı mecanum kinematik
+  ve tekerlek hız hesaplarını doğrulamak.
+
+  Test senaryoları:
+    1. Düz ileri  : vx=0.5, vy=0,   omega=0
+    2. Yanal sağa : vx=0,   vy=-0.5, omega=0
+    3. Yanal sola : vx=0,   vy=0.5,  omega=0
+    4. Yerinde dönüş sola : vx=0, vy=0, omega=0.5
+    5. Diagonal   : vx=0.3, vy=0.3,  omega=0
+-->
+<sdf version="1.6">
+  <world name="test_kinematics">
+
+    <physics type="ode">
+      <real_time_update_rate>1000.0</real_time_update_rate>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <scene>
+      <ambient>0.6 0.6 0.6 1</ambient>
+      <background>0.8 0.8 0.8 1</background>
+      <shadows>false</shadows>
+    </scene>
+
+    <light name="sun" type="directional">
+      <cast_shadows>false</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.9 0.9 0.9 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <direction>0 0 -1</direction>
+    </light>
+
+    <!-- Düz zemin -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!--
+      Referans işaretçileri: hangi yönde gittiğini görsel olarak kontrol etmek için
+      X ekseni boyunca kırmızı çizgi (1m aralıklı bloklar)
+    -->
+    <model name="marker_x1">
+      <static>true</static>
+      <pose>1 0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="v">
+          <geometry><box><size>0.1 0.05 0.02</size></box></geometry>
+          <material><ambient>1 0 0 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="marker_x2">
+      <static>true</static>
+      <pose>2 0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="v">
+          <geometry><box><size>0.1 0.05 0.02</size></box></geometry>
+          <material><ambient>1 0 0 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="marker_y1">
+      <static>true</static>
+      <pose>0 1 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="v">
+          <geometry><box><size>0.05 0.1 0.02</size></box></geometry>
+          <material><ambient>0 1 0 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="marker_y2">
+      <static>true</static>
+      <pose>0 2 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="v">
+          <geometry><box><size>0.05 0.1 0.02</size></box></geometry>
+          <material><ambient>0 1 0 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Başlangıç noktası işareti (sarı) -->
+    <model name="marker_origin">
+      <static>true</static>
+      <pose>0 0 0.005 0 0 0</pose>
+      <link name="link">
+        <visual name="v">
+          <geometry><box><size>0.3 0.3 0.01</size></box></geometry>
+          <material><ambient>1 1 0 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <gui fullscreen="0">
+      <camera name="user_camera">
+        <pose>0 -5 4 0 0.7 1.5708</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+
+  </world>
+</sdf>
+

@@ -1,0 +1,9 @@
+# ClangFormat for C/C++ in this repo
+# Use: clang-format -i file.c
+Language: Cpp
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 100
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+PointerAlignment: Left

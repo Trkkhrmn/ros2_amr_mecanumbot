@@ -1,0 +1,18 @@
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>mecanum_navigation</name>
+  <version>1.0.0</version>
+  <description>SLAM and Nav2 configuration for the Mecanum AMR</description>
+  <maintainer email="your@email.com">Tarik Kahraman</maintainer>
+  <license>MIT</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>nav2_bringup</depend>
+  <depend>slam_toolbox</depend>
+  <depend>nav2_map_server</depend>
+  <depend>nav2_amcl</depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,35 @@
+# warehouse.world devriye waypoint'leri
+# 5 yol arasında döngüsel devriye (patrol_manager ile kullanılır)
+#
+# Yol 1: (1.79, -9.48) - (1.94, 10.41)   dikey
+# Yol 2: (2.01, 2.66) - (6.70, 2.60)     yol 1'den sağa tali
+# Yol 3: (1.85, -8.99) - (-3.68, -8.94)  yatay
+# Yol 4: (-3.68, -8.94) - (-3.62, 9.60)  dikey
+# Yol 5: (-3.62, 9.60) - (-6.43, 9.60)   yatay
+#
+# Kullanım (launch ile):
+#   waypoints_yaml:=$(ros2 pkg prefix mecanum_task_manager)/share/mecanum_task_manager/config/warehouse_patrol_waypoints.yaml
+
+patrol_waypoints:
+  # --- Yol 1 (dikey) ---
+  - { x: 1.793270,  y: -9.482950,  yaw: 0.0 }   # 1 başlangıç
+  - { x: 1.938525,  y: 10.405763,  yaw: 0.0 }   # 1 son
+
+  # --- Yol 2 (sağa tali) ---
+  - { x: 2.008489,  y: 2.657990,   yaw: 0.0 }   # 2 başlangıç
+  - { x: 6.703754,  y: 2.602867,   yaw: 0.0 }   # 2 son
+
+  # --- Yol 3 (yatay) ---
+  - { x: 1.853075,  y: -8.991578,  yaw: 0.0 }   # 3 başlangıç
+  - { x: -3.676680, y: -8.935275,  yaw: 0.0 }   # 3 son
+
+  # --- Yol 4 (dikey) ---
+  - { x: -3.621828, y: 9.600686,   yaw: 0.0 }   # 4 son
+
+  # --- Yol 5 (yatay) ---
+  - { x: -6.432380, y: 9.600,      yaw: 0.0 }   # 5 son
+
+  # --- Döngüyü kapat: 5 → 4 → 3 → 1 ---
+  - { x: -3.621828, y: 9.600686,   yaw: 0.0 }
+  - { x: -3.676680, y: -8.935275,  yaw: 0.0 }
+  - { x: 1.853075,  y: -8.991578,  yaw: 0.0 }

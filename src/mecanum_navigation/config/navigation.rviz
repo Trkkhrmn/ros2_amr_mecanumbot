@@ -1,0 +1,96 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: nav2_rviz_plugins/Nav2Panel
+    Name: Navigation 2
+
+Visualization Manager:
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Value: true
+      Cell Size: 1
+
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Value: true
+      Description Topic:
+        Value: /robot_description
+
+    - Class: rviz_default_plugins/Map
+      Name: Global Map
+      Value: true
+      Topic:
+        Value: /map
+      Alpha: 0.7
+      Color Scheme: map
+
+    - Class: rviz_default_plugins/Map
+      Name: Global Costmap
+      Value: true
+      Topic:
+        Value: /global_costmap/costmap
+      Alpha: 0.4
+      Color Scheme: costmap
+
+    - Class: rviz_default_plugins/Map
+      Name: Local Costmap
+      Value: true
+      Topic:
+        Value: /local_costmap/costmap
+      Alpha: 0.45
+      Color Scheme: costmap
+
+    - Class: rviz_default_plugins/Path
+      Name: Global Path
+      Value: true
+      Topic:
+        Value: /plan
+      Color: 0; 200; 0
+      Line Width: 0.03
+
+    - Class: rviz_default_plugins/Path
+      Name: Local Path
+      Value: true
+      Topic:
+        Value: /local_plan
+      Color: 255; 165; 0
+      Line Width: 0.03
+
+    - Class: rviz_default_plugins/LaserScan
+      Name: LiDAR
+      Value: true
+      Topic:
+        Value: /scan
+      Size (m): 0.05
+      Color: 255; 50; 50
+
+    - Class: rviz_default_plugins/PoseArray
+      Name: AMCL Particles
+      Value: true
+      Topic:
+        Value: /particle_cloud
+      Color: 255; 140; 0
+      Arrow Length: 0.3
+
+    - Class: rviz_default_plugins/Pose
+      Name: Robot Pose
+      Value: true
+      Topic:
+        Value: /amcl_pose
+      Color: 0; 255; 0
+      Arrow Length: 0.5
+
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Value: false
+
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: map
+
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Scale: 30
+

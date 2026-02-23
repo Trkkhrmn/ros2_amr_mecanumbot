@@ -1,0 +1,15 @@
+# Hardware bridge parameters (Jetson -> STM32 UART)
+# Override via launch args or environment as needed.
+
+hw_bridge_node:
+  ros__parameters:
+    serial_port: "/dev/ttyTHS1"
+    baud_rate: 115200
+    # Mecanum kinematics (match your robot)
+    wheel_radius: 0.075
+    lx: 0.25
+    ly: 0.35
+    max_wheel_speed: 15.0
+    # Safety
+    cmd_timeout_sec: 0.5
+    motion_rate_hz: 25.0

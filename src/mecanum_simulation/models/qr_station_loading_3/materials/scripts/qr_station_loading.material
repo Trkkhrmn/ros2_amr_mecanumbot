@@ -1,0 +1,19 @@
+material QRStation/qr_station_loading
+{
+  technique
+  {
+    pass
+    {
+      ambient  1.0 1.0 1.0 1.0
+      diffuse  1.0 1.0 1.0 1.0
+      specular 0.0 0.0 0.0 1.0
+
+      texture_unit
+      {
+        texture qr_station_loading_3.png
+        filtering trilinear
+      }
+    }
+  }
+}
+

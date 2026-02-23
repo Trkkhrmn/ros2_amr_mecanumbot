@@ -1,0 +1,9 @@
+# Normalize line endings
+* text=auto eol=lf
+*.{bat,cmd} text eol=crlf
+
+# Denote binary files
+*.{png,jpg,jpeg,gif,ico,pdf,woff,woff2} binary
+
+# Language stats (optional: exclude generated or vendored)
+# *.gen.* linguist-generated=true

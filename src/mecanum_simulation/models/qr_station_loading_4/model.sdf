@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="qr_station_loading_4">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <!-- 0.4m x 0.4m ince plaka, zemine yatık -->
+          <box>
+            <size>0.4 0.4 0.01</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://qr_station_loading_4/materials/scripts/qr_station_loading.material</uri>
+            <uri>model://qr_station_loading_4/materials/textures</uri>
+            <name>QRStation/qr_station_loading</name>
+          </script>
+        </material>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.4 0.4 0.01</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>
+

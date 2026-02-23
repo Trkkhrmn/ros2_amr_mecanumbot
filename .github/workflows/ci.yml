@@ -1,0 +1,46 @@
+name: ROS 2 CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+    container:
+      image: osrf/ros:humble-desktop
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y \
+            --skip-keys "gazebo gazebo_ros gazebo_plugins"
+
+      - name: Build
+        run: |
+          . /opt/ros/humble/setup.sh
+          colcon build --symlink-install \
+            --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+
+      - name: Test
+        run: |
+          . /opt/ros/humble/setup.sh
+          . install/setup.sh
+          colcon test --return-code-on-test-failure
+
+      - name: HW bridge kinematics test
+        run: |
+          PYTHONPATH=$GITHUB_WORKSPACE/src/mecanum_hw_bridge \
+            python3 src/mecanum_hw_bridge/test/test_kinematics.py
+
+      - name: STM32 protocol host test
+        run: |
+          make -C hardware/stm32 build_host
+          ./hardware/stm32/main_host

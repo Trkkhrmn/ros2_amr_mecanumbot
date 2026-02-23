@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- model:// kullanmıyor; gzserver model path olmadan açılır (exit 255 önlemi) -->
+<sdf version="1.6">
+  <world name="minimal">
+    <physics type="ode">
+      <real_time_update_rate>250.0</real_time_update_rate>
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.6 0.6 0.65 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>1 1 1 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    <!-- Zemin: ince kutu (plane/size bazı Gazebo sürümlerinde 255 hatası veriyor) -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>100 100 0.01</size></box></geometry>
+          <surface><friction><ode><mu>0.5</mu><mu2>0.5</mu2></ode></friction></surface>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>100 100 0.01</size></box></geometry>
+          <material><ambient>0.8 0.8 0.8 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse><specular>0.1 0.1 0.1 1</specular></material>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>
