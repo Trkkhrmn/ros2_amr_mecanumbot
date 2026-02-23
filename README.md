@@ -21,7 +21,7 @@ This repository contains the **simulation stack** and **hardware interface** for
 | **Muhammed Sait Karadeniz** | Image processing, Jetson Nano software and integration. |
 | **Samet Hasan Köse** | Motor control, STM32 firmware, motor drivers. |
 
-This repo is the author's own work; the hardware protocol and bridge were designed for the real system. No code has been copied from other projects. See [docs/PROJECT_BACKGROUND.md](docs/PROJECT_BACKGROUND.md) for more context.
+This repo is the author's own work; the hardware protocol and bridge were designed for the real system. No code has been copied from other projects. The project was built around a **physical Mecanum AMR** (Jetson Nano + STM32 over UART); a lot of the autonomy was developed and tested in ROS 2 and Gazebo. This repository preserves that work: you get both a **working Gazebo simulation** (SLAM, Nav2, QR, lift, task state machine) and the **hardware integration layer** (UART protocol, Jetson bridge, STM32 parser and motor/lift stubs) for the real robot. More context: [docs/PROJECT_BACKGROUND.md](docs/PROJECT_BACKGROUND.md).
 
 ---
 
@@ -54,20 +54,57 @@ This repo is the author's own work; the hardware protocol and bridge were design
 
 ## Hardware integration (real robot)
 
-This repo was designed for a **physical Mecanum AMR**: **Jetson Nano** (ROS 2, Nav2, SLAM, QR, task manager) and **STM32** (motor drivers, lift). The hardware interface is in the [`hardware/`](hardware/) folder:
+This repo was designed for a **physical Mecanum AMR**: **Jetson Nano** (ROS 2, Nav2, SLAM, QR, task manager) and **STM32** (motor drivers, lift). The hardware interface lives in the [`hardware/`](hardware/) folder. The same codebase covers **simulation** (Gazebo) and **real hardware** (Jetson + STM32 over UART).
 
-| Item | Description |
-|------|-------------|
-| [hardware/README.md](hardware/README.md) | Stack overview (Jetson + STM32), quick start. |
-| [hardware/HARDWARE_ARCHITECTURE.md](hardware/HARDWARE_ARCHITECTURE.md) | Block diagram, connections, roles. |
-| [hardware/docs/PROTOCOL.md](hardware/docs/PROTOCOL.md) | UART protocol: `M,w_fl,w_fr,w_rl,w_rr` (motion), `L,0` / `L,1` (lift). |
-| **Jetson** | ROS 2 package `mecanum_hw_bridge`: subscribes to `/cmd_vel`, provides `/lift/up` and `/lift/down`, sends ASCII frames to STM32. |
-| **STM32** | [hardware/stm32/](hardware/stm32/): protocol parser (C) and stubs for motor/lift control; integrate with your HAL and PWM. |
-| [docs/DEPLOYMENT_JETSON.md](docs/DEPLOYMENT_JETSON.md) | How to run on Jetson Nano, serial port, watchdog. |
+### Stack overview
 
-So the same codebase covers **simulation** (Gazebo) and **real hardware** (Jetson + STM32 over UART).
+| Component | Role |
+|-----------|------|
+| **Jetson Nano** | Runs ROS 2 Humble: Nav2, SLAM, QR/task manager, kinematics. Publishes `/cmd_vel` and lift commands. Talks to STM32 over UART. |
+| **STM32** | Receives motion and lift commands via UART. Drives 4× mecanum motors (PWM) and lift actuator. Watchdog stops motors if no command for ~300–500 ms. |
 
-**Want to run this on your own mecanum robot?** → [Real robot quick start](docs/REAL_ROBOT_QUICKSTART.md) (what to wire, what to flash, how to test).
+```
+  Jetson Nano (ROS 2)  →  /cmd_vel, /lift/up|down  →  mecanum_hw_bridge  →  UART (115200)
+                                                                                ↓
+  STM32  →  parse protocol  →  PWM 4× wheels + lift
+```
+
+Connection: Jetson TX → STM32 RX, Jetson RX → STM32 TX (optional telemetry), GND common. Use `/dev/ttyTHS1` (Jetson 40-pin) or USB–serial `/dev/ttyUSB0`.
+
+### UART protocol (Jetson ↔ STM32)
+
+ASCII, line-based, 115200 8N1. Frames (LF-terminated):
+
+| Direction | Frame | Meaning |
+|-----------|--------|---------|
+| Jetson → STM32 | `M,w_fl,w_fr,w_rl,w_rr\n` | Wheel speeds in rad/s (front_left, front_right, rear_left, rear_right). Sent at ~20–50 Hz. |
+| Jetson → STM32 | `L,0\n` / `L,1\n` | Lift down / up. |
+| Jetson → STM32 | `H\n` (optional) | Heartbeat. |
+| STM32 → Jetson | `T,...\n` (optional) | Telemetry. |
+
+The ROS package `mecanum_hw_bridge` subscribes to `/cmd_vel`, advertises `/lift/up` and `/lift/down`, and sends these frames to the STM32. Full protocol: [hardware/docs/PROTOCOL.md](hardware/docs/PROTOCOL.md). Block diagram and pins: [hardware/HARDWARE_ARCHITECTURE.md](hardware/HARDWARE_ARCHITECTURE.md).
+
+### Running on Jetson (real robot)
+
+1. Connect STM32 via UART; add user to `dialout`: `sudo usermod -aG dialout $USER` (then log out and back in).
+2. Install pyserial: `pip3 install pyserial`.
+3. Build workspace and run the bridge:
+
+```bash
+ros2 launch mecanum_hw_bridge real_robot_bringup.launch.py serial_port:=/dev/ttyTHS1
+```
+
+(Use `serial_port:=/dev/ttyUSB0` for USB–serial.) The bridge sends motion at a fixed rate; if no `/cmd_vel` for the timeout (e.g. 0.5 s), it sends zero motion so the STM32 can stop the motors. Details: [docs/DEPLOYMENT_JETSON.md](docs/DEPLOYMENT_JETSON.md).
+
+### Quick start on your own mecanum robot
+
+You need: 4 mecanum wheels (+ drivers), optional lift; Jetson or any Linux with ROS 2 Humble; STM32 (or other MCU) with one UART to the Jetson.
+
+- **STM32:** Copy `hardware/stm32/` protocol code into your project; implement `motor_set_speeds(w_fl,w_fr,w_rl,w_rr)` and `lift_set(0|1)` with your PWM/HAL. UART 115200 8N1; feed bytes into the parser and run a watchdog (stop motors if no frame for 500 ms). Flash the board.
+- **Jetson:** Clone repo, `rosdep install`, `colcon build`, then run the bridge with the correct `serial_port`. Tune `wheel_radius`, `lx`, `ly` in `mecanum_hw_bridge` config if your robot dimensions differ.
+- **First test:** With bridge and STM32 connected, publish once to `/cmd_vel` (e.g. `ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2}, angular: {z: 0.0}}"`) and call `/lift/up` and `/lift/down` to verify motion and lift. Then run the full stack (SLAM, Nav2) as in simulation.
+
+Step-by-step wiring, flash, and troubleshooting: [docs/REAL_ROBOT_QUICKSTART.md](docs/REAL_ROBOT_QUICKSTART.md) and [hardware/README.md](hardware/README.md).
 
 **Real system — overview and tests:**
 
@@ -153,24 +190,45 @@ ros2 launch mecanum_navigation navigation.launch.py slam_mode:=true
 
 ### Green lane (camera view + follow)
 
-In the warehouse world you can open a **separate window** with the robot's camera view and OpenCV indicators (green strip detection, path centering). Optionally, the robot can **follow the two green lines** automatically.
+In the warehouse world you can open a **separate window** with the robot's camera view and OpenCV indicators (green strip detection, path centering). Optionally, the robot can **follow the two green lines** automatically. The default world `warehouse` includes the green lines.
 
 ![Green line following in the warehouse](docs/images/Green_line.gif)
 
-- **Camera window + indicators:** `ros2 run mecanum_control green_lane_detector.py`
-- **Follow two green lines:** `ros2 run mecanum_control green_lane_detector.py --follow`
+1. **Start the simulation** (if not already running):  
+   `ros2 launch mecanum_bringup sim_bringup.launch.py`
 
-See [docs/GREEN_LANE.md](docs/GREEN_LANE.md) for full steps (start sim first, then run the detector).
+2. **Camera window + indicators only** (no motion): in a second terminal,  
+   `ros2 run mecanum_control green_lane_detector.py`  
+   A window shows the robot camera; OpenCV draws **GREEN DETECTED**, **CENTERED**, or **OFFSET LEFT/RIGHT**, with a yellow line for strip center and blue for image center.
+
+3. **Follow the two green lines** (robot moves):  
+   `ros2 run mecanum_control green_lane_detector.py --follow`  
+   The node publishes `/cmd_vel` to keep the robot between the two green lines; if no green is detected, it stops.
+
+Requires `cv_bridge` and OpenCV (e.g. `sudo apt install ros-humble-cv-bridge`). Topic: `/camera/image_raw`. Full steps: [docs/GREEN_LANE.md](docs/GREEN_LANE.md).
 
 ### SLAM mapping (warehouse world)
 
-To open the warehouse world, run SLAM, and save the map to `maps/`:
+Open the warehouse world, SLAM Toolbox, and RViz in one go:
 
 ```bash
 ros2 launch mecanum_navigation test_mapping_slam.launch.py world:=warehouse
 ```
 
-Then drive the robot with teleop and save the map (see [docs/MAPPING_WAREHOUSE.md](docs/MAPPING_WAREHOUSE.md)).
+In a second terminal, drive the robot with teleop so the map fills in:
+
+```bash
+source install/setup.bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+Use **w/s** for forward/back, **a/d** for turn. When the map is complete, save it to the package `maps/` folder (from repo root, with launch and teleop still running):
+
+```bash
+ros2 run nav2_map_server map_saver_cli -f src/mecanum_navigation/maps/warehouse_map --ros-args -p map_subscribe_transient_local:=true
+```
+
+This creates `warehouse_map.yaml` and `warehouse_map.pgm` under `src/mecanum_navigation/maps/`. Full guide: [docs/MAPPING_WAREHOUSE.md](docs/MAPPING_WAREHOUSE.md).
 
 **QR-based navigation** — robot moving to a target pose read from a QR code:
 
@@ -233,4 +291,4 @@ Place the following in `docs/images/` so the README displays them correctly:
 
 ## License
 
-[MIT License](LICENSE). See [CONTRIBUTING.md](CONTRIBUTING.md) if you want to contribute.
+[MIT License](LICENSE). Contributions are welcome: fork, branch, make your changes, then open a PR. Use ROS 2 Humble on Ubuntu 22.04 and `colcon build --symlink-install`; CI runs on push to `main`/`develop` and on PRs. Full guide (code style, tests, maintainer): [CONTRIBUTING.md](CONTRIBUTING.md).
