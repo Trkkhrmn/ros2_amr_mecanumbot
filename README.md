@@ -43,7 +43,7 @@ This repo is the author’s own work; the hardware protocol and bridge were desi
 
 - **QR-based navigation** — Robot moving to a target pose read from a QR code (simulation).
 
-![QR to goal](docs/images/mapping.png)
+![QR to goal](docs/images/mapping.gif)
 
 - **Warehouse map** — Occupancy grid built from LiDAR data (manual mapping run).
 
@@ -51,21 +51,21 @@ This repo is the author’s own work; the hardware protocol and bridge were desi
 
 - **Green line following** — Robot following the two green lines in the warehouse using the camera and OpenCV (detection + centering indicators, optional `/cmd_vel` follow mode).
 
-![Green line following](docs/images/Green_line.gif)
+![Green line following](docs/images/Green_line.mp4)
 
 ### Real robot
 
 - **Robot overview** — Physical AMR with enclosure, LiDAR, and computing unit (e.g. Jetson Nano).
 
-![Real robot overview](docs/images/robot_overview.png)
+![Real robot overview](docs/images/image.jpg)
 
 - **Lift system** — AMR moving under the load and lifting it (real system).
 
-![Lift system](docs/images/lift_system.png)
+![Lift system](docs/images/Lift_system.mp4)
 
 - **Localization and path planning** — Obstacle avoidance and path planning tests at **Yıldız Technical University, Faculty of Electrical and Electronics**.
 
-![Localization test at Yıldız Technical University](docs/images/localization.png)
+![Localization test at Yıldız Technical University](docs/images/localization.mp4)
 
 ---
 
