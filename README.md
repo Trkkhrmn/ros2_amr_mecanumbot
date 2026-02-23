@@ -155,7 +155,7 @@ Step-by-step wiring, flashing, and troubleshooting: [docs/REAL_ROBOT_QUICKSTART.
 
 **Real system photos:**
 
-| ![Real robot overview](docs/images/image.jpg) | ![Lift system](docs/images/Lift_system.gif) |
+| ![Real robot overview](docs/images/image_2.jpg) | ![Lift system](docs/images/Lift_system.gif) |
 |:---:|:---:|
 | Physical AMR (Jetson Nano, LiDAR, enclosure) | AMR picking up a load with the lift |
 
