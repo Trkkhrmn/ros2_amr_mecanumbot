@@ -5,21 +5,13 @@
 [![Gazebo Classic](https://img.shields.io/badge/Gazebo-Classic%2011-333333?logo=open-in-new)](https://gazebosim.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-ROS 2 Humble + Gazebo simulation of a mecanum-wheel autonomous warehouse robot. It scans the environment with LiDAR, builds a map with SLAM, reads QR codes to get target poses, navigates there with Nav2, and uses a lift mechanism to pick and place loads.
-
----
-
-## Highlights
-
-| [![Simulation environment](docs/images/general_map.png)](docs/images/general_map.png) | [![Real robot overview](docs/images/robot_overview.png)](docs/images/robot_overview.png) |
-|:---:|:---:|
-| **Simulation** — General view of the warehouse environment (Gazebo). | **Real robot** — General view of the physical AMR (Jetson Nano, LiDAR, enclosure). |
+ROS 2 Humble + Gazebo simulation of a **mecanum-wheel** autonomous warehouse robot. It scans the environment with LiDAR, builds a map with SLAM, reads QR codes to get target poses, navigates there with Nav2, and uses a lift mechanism to pick and place loads.
 
 ---
 
 ## About this project
 
-This repository contains the **simulation stack** and **hardware interface** for a Mecanum AMR developed as a team project. The same architecture runs in **Gazebo** (this repo) and on the **physical robot** (Jetson Nano + STM32).
+This repository contains the **simulation stack** and **hardware interface** for a Mecanum AMR developed as a team project at **Yıldız Technical University, Faculty of Electrical and Electronics**. The same architecture runs in **Gazebo** (this repo) and on the **physical robot** (Jetson Nano + STM32).
 
 **Project team:**
 
@@ -29,43 +21,7 @@ This repository contains the **simulation stack** and **hardware interface** for
 | **Muhammed Sait Karadeniz** | Image processing, Jetson Nano software and integration. |
 | **Samet Hasan Köse** | Motor control, STM32 firmware, motor drivers. |
 
-This repo is the author’s own work; the hardware protocol and bridge were designed for the real system. No code has been copied from other projects. See [docs/PROJECT_BACKGROUND.md](docs/PROJECT_BACKGROUND.md) for more context.
-
----
-
-## Media
-
-### Simulation
-
-- **General view of the simulation environment** — Warehouse world with shelves, QR stations, and navigation paths.
-
-![Simulation environment](docs/images/general_map.png)
-
-- **QR-based navigation** — Robot moving to a target pose read from a QR code (simulation).
-
-![QR to goal](docs/images/mapping.gif)
-
-- **Warehouse map** — Occupancy grid built from LiDAR data (manual mapping run).
-
-![Warehouse map from LiDAR](docs/images/warehouse_map.png)
-
-- **Green line following** — Robot following the two green lines in the warehouse using the camera and OpenCV (detection + centering indicators, optional `/cmd_vel` follow mode).
-
-![Green line following](docs/images/Green_line.gif)
-
-### Real robot
-
-- **Robot overview** — Physical AMR with enclosure, LiDAR, and computing unit (e.g. Jetson Nano).
-
-![Real robot overview](docs/images/image.jpg)
-
-- **Lift system** — AMR moving under the load and lifting it (real system).
-
-![Lift system](docs/images/Lift_system.gif)
-
-- **Localization and path planning** — Obstacle avoidance and path planning tests at **Yıldız Technical University, Faculty of Electrical and Electronics**.
-
-![Localization test at Yıldız Technical University](docs/images/localization.gif)
+This repo is the author's own work; the hardware protocol and bridge were designed for the real system. No code has been copied from other projects. See [docs/PROJECT_BACKGROUND.md](docs/PROJECT_BACKGROUND.md) for more context.
 
 ---
 
@@ -112,6 +68,16 @@ This repo was designed for a **physical Mecanum AMR**: **Jetson Nano** (ROS 2, N
 So the same codebase covers **simulation** (Gazebo) and **real hardware** (Jetson + STM32 over UART).
 
 **Want to run this on your own mecanum robot?** → [Real robot quick start](docs/REAL_ROBOT_QUICKSTART.md) (what to wire, what to flash, how to test).
+
+**Real system — overview and tests:**
+
+| ![Real robot overview](docs/images/robot_overview.png) | ![Lift system](docs/images/lift_system.png) |
+|:---:|:---:|
+| Physical AMR (Jetson Nano, LiDAR, enclosure). | AMR moving under the load and lifting it. |
+
+![Localization and path planning test at Yıldız Technical University](docs/images/localization.png)
+
+*Obstacle avoidance and path planning tests — Yıldız Technical University, Faculty of Electrical and Electronics.*
 
 ---
 
@@ -160,6 +126,10 @@ docker run -it --rm \
 
 ### Starting the simulation
 
+Default run: warehouse world with robot and lift. Optional: Nav2 + SLAM, or minimal/empty world.
+
+![Simulation environment — warehouse with shelves and QR stations](docs/images/general_map.png)
+
 ```bash
 # Warehouse world + robot + lift (default)
 ros2 launch mecanum_bringup sim_bringup.launch.py
@@ -183,7 +153,9 @@ ros2 launch mecanum_navigation navigation.launch.py slam_mode:=true
 
 ### Green lane (camera view + follow)
 
-In the warehouse world you can open a **separate window** with the robot’s camera view and OpenCV indicators (green strip detection, path centering). Optionally, the robot can **follow the two green lines** automatically.
+In the warehouse world you can open a **separate window** with the robot's camera view and OpenCV indicators (green strip detection, path centering). Optionally, the robot can **follow the two green lines** automatically.
+
+![Green line following in the warehouse](docs/images/Green_line.gif)
 
 - **Camera window + indicators:** `ros2 run mecanum_control green_lane_detector.py`
 - **Follow two green lines:** `ros2 run mecanum_control green_lane_detector.py --follow`
@@ -199,6 +171,14 @@ ros2 launch mecanum_navigation test_mapping_slam.launch.py world:=warehouse
 ```
 
 Then drive the robot with teleop and save the map (see [docs/MAPPING_WAREHOUSE.md](docs/MAPPING_WAREHOUSE.md)).
+
+**QR-based navigation** — robot moving to a target pose read from a QR code:
+
+![QR to goal](docs/images/mapping.png)
+
+**Occupancy grid** built from LiDAR (manual mapping run):
+
+![Warehouse map from LiDAR](docs/images/warehouse_map.png)
 
 ### Troubleshooting
 
@@ -246,7 +226,7 @@ Place the following in `docs/images/` so the README displays them correctly:
 | `mapping.png` | QR-based navigation to goal (simulation) |
 | `warehouse_map.png` | LiDAR-based occupancy map |
 | `general_map.png` | General view of the simulation environment |
-| `ros2_architecture.png` | ROS 2 architecture diagram (replaces ASCII block) |
+| `ros2_architecture.png` | ROS 2 architecture diagram |
 | `Green_line.gif` | Green line following in warehouse (camera + OpenCV) |
 
 ---
