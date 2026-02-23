@@ -159,7 +159,7 @@ Step-by-step wiring, flashing, and troubleshooting: [docs/REAL_ROBOT_QUICKSTART.
 |:---:|:---:|
 | Physical AMR (Jetson Nano, LiDAR, enclosure) | AMR picking up a load with the lift |
 
-![Localization and path planning test at Yıldız Technical University](docs/images/localization.png)
+![Localization and path planning test at Yıldız Technical University](docs/images/localization.gif)
 
 *Obstacle avoidance and path planning tests — Yıldız Technical University, Faculty of Electrical and Electronics.*
 
