@@ -51,7 +51,7 @@ This repo is the author’s own work; the hardware protocol and bridge were desi
 
 - **Green line following** — Robot following the two green lines in the warehouse using the camera and OpenCV (detection + centering indicators, optional `/cmd_vel` follow mode).
 
-![Green line following](docs/images/Green_line.mp4)
+![Green line following](docs/images/Green_line.gif)
 
 ### Real robot
 
@@ -61,11 +61,11 @@ This repo is the author’s own work; the hardware protocol and bridge were desi
 
 - **Lift system** — AMR moving under the load and lifting it (real system).
 
-![Lift system](docs/images/Lift_system.mp4)
+![Lift system](docs/images/Lift_system.gif)
 
 - **Localization and path planning** — Obstacle avoidance and path planning tests at **Yıldız Technical University, Faculty of Electrical and Electronics**.
 
-![Localization test at Yıldız Technical University](docs/images/localization.mp4)
+![Localization test at Yıldız Technical University](docs/images/localization.gif)
 
 ---
 
