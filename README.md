@@ -1,6 +1,5 @@
 # Mecanum AMR — Autonomous Mobile Robot
 
-[![CI](https://github.com/Trkkhrmn/ros2_amr_mecanumbot/actions/workflows/ci.yml/badge.svg)](https://github.com/Trkkhrmn/ros2_amr_mecanumbot/actions/workflows/ci.yml)
 [![ROS 2 Humble](https://img.shields.io/badge/ROS%202-Humble-22314E?logo=ros)](https://docs.ros.org/en/humble/)
 [![Gazebo Classic](https://img.shields.io/badge/Gazebo-Classic%2011-333333?logo=open-in-new)](https://gazebosim.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
