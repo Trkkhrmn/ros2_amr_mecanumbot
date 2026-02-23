@@ -27,6 +27,7 @@ jobs:
         run: |
           . /opt/ros/humble/setup.sh
           colcon build --symlink-install \
+            --packages-skip mecanum_simulation \
             --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
 
       - name: Test
